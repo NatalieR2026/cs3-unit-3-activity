@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400..700;1,400..700&family=IM+Fell+French+Canon:ital@0;1&display=swap');
+
+body {
+    background: rgb(153, 186, 145);
+    text-align: center;
+}
+
+table {
+    padding: 10px;
+    padding-left: 200px;
+}
