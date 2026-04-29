@@ -1,43 +1,56 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
-# Create instance of Flask
 app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///places.db'
 db = SQLAlchemy(app)
 
-# Define model of a to-do list TASK object
-class Task(db.Model):
-    # db.Column represents a col in the database
+# model
+class Place(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.now())
+    name = db.Column(db.String(100), nullable=False)
+    order = db.Column(db.String(100), nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    location = db.Column(db.String(100), nullable=False)
 
-    # Homepage route
-    @app.route("/")
-    def index():
-        # Add new Task to database
-        if request.method == 'POST':
-            task_content = request.form['content']
-            new_task = Task(content=task_content)
-            # Put new Task in database
-            try:
-                db.session.add(new_task)
-                db.session.commit()
-                return redirect('/')
-            except:
-                return 'Error adding task'
-        # Select all Tasks from database
-        all_tasks = Task.query.all()
-        return render_template('index.html', tasks=all_tasks)
+# HOME PAGE
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-# (if you closed your terminal, open it again with CTRL + `)
-# TO STOP click CTRL + C in the TERMINAL
-# RUN THE APP (or type flask run in terminal)
-# Create the database in the main method
+# ADD NEW PLACE PAGE
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    if request.method == "POST":
+        name = request.form["name"]
+        order = request.form["order"]
+        rating = request.form["rating"]
+        location = request.form["location"]
+
+        new_place = Place(
+            name=name,
+            order=order,
+            rating=float(rating),
+            location=location
+        )
+
+        try:
+            db.session.add(new_place)
+            db.session.commit()
+            return redirect("/map")
+        except:
+            return "Error adding place"
+
+    return render_template("add.html")
+
+# MAP (GALLERY) PAGE
+@app.route("/map")
+def map():
+    places = Place.query.all()
+    return render_template("map.html", places=places)
+
+# RUN APP
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)

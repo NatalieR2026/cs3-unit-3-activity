@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matcha Map</title>
+</head>
+
+<body>
+    <h1>Matcha Places</h1>
+
+    <a href="/"><button>Back</button></a>
+
+    <hr>
+
+    {% for place in places %}
+        <div style="border:1px solid black; padding:10px; margin:10px;">
+            <h2>{{ place.name }}</h2>
+            <p><strong>Order:</strong> {{ place.order }}</p>
+            <p><strong>Rating:</strong> {{ place.rating }}</p>
+            <p><strong>Location:</strong> {{ place.location }}</p>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
